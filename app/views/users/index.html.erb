@@ -1,0 +1,50 @@
+<script>
+function post(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+         }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+<h1>Listing Users</h1>
+ 
+<table>
+  <tr>
+    <th>User id</th>
+    <th>User name</th>
+  </tr>
+ 
+  <% @user.each do |user| %>
+    <tr>
+      <td><%= user.user %></td>
+      <td><%= user.name %></td>
+    </tr>
+  <% end %>
+</table>
+
+<h1>Modify users</h1>
+  <%= select_tag "user",options_from_collection_for_select(@user, "id", "name"), prompt: "Select Something", size: "5" %> <BR>
+  <input type="button" value="select" onClick="post('/users/' + document.getElementById('user').value,'','get');" />
+  <input type="button" value="edit" onClick="post('/users/' + document.getElementById('user').value +'/edit','','get')"; />
+  <input type="button" value="delete" onClick="window._token = '<%= form_authenticity_token %>'; var param = {_method:'delete', authenticity_token:window._token}; post('/users/' + document.getElementById('user').value,param,'post');" />
+  <br><br>
+</form>
+  <%= link_to "New User", new_user_path  %>
+<%= link_to 'Home', root_path %>
